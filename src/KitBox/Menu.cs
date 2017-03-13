@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Evaluator
+namespace KitBox
 {
 	public class Menu
 	{
