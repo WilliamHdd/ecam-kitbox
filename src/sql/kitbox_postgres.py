@@ -10,7 +10,7 @@ def Postgres(user, db):
      cursor = conn.cursor()
 
      cursor.execute("""
-     CREATE TABLE IF NOT EXISTS provider(
+     CREATE TABLE IF NOT EXISTS supplier(
           id SERIAL PRIMARY KEY NOT NULL,
           name_society VARCHAR(255),
           name_shop VARCHAR(255),
@@ -69,16 +69,16 @@ def Postgres(user, db):
      conn.commit()
 
      cursor.execute("""
-     CREATE TABLE IF NOT EXISTS feature_provider(
+     CREATE TABLE IF NOT EXISTS feature_supplier(
         id SERIAL PRIMARY KEY NOT NULL,
-          id_provider INT,
+          id_supplier INT,
           code VARCHAR(255),
-          time_provider INT,
-          price_provider FLOAT,
+          time_supplier INT,
+          price_supplier FLOAT,
           FOREIGN KEY (code)
           REFERENCES product(code),
-          FOREIGN KEY (id_provider)
-          REFERENCES provider(id)
+          FOREIGN KEY (id_supplier)
+          REFERENCES supplier(id)
      )
      """)
      conn.commit()
@@ -98,9 +98,9 @@ def Postgres(user, db):
           type orderitem_pos,
           quantity INT,
           unit_cost FLOAT,
-          FOREIGN KEY (id_order) 
+          FOREIGN KEY (id_order)
           REFERENCES purchase(id),
-          FOREIGN KEY (code_product) 
+          FOREIGN KEY (code_product)
           REFERENCES product(code)
      )
      """)
@@ -115,6 +115,16 @@ def Postgres(user, db):
           email VARCHAR(255),
           password VARCHAR(255)
      )
+     """)
+     conn.commit()
+
+     cursor.execute("""
+     CREATE TABLE IF NOT EXISTS oder_product_supplier(
+     """)
+     conn.commit()
+
+     cursor.execute("""
+     CREATE TABLE IF NOT EXISTS oder_supplier(
      """)
      conn.commit()
 
@@ -138,16 +148,16 @@ def Postgres(user, db):
           final = [list(g) for k, g in groupby(doc_filtered, lambda x: '------' not in x and 'Fournisseur' not in x) if k]
           f.close()
 
-     query = "INSERT INTO provider (name_society, name_shop, address, city) VALUES (%s, %s, %s, %s)"
+     query = "INSERT INTO supplier (name_society, name_shop, address, city) VALUES (%s, %s, %s, %s)"
      insert = []
 
-     for provider in final:
-          insert.append((provider[0], provider[1], provider[2], provider[3]))
+     for supplier in final:
+          insert.append((supplier[0], supplier[1], supplier[2], supplier[3]))
 
      cursor.executemany(query, tuple(insert))
      conn.commit()
 
-     query = "INSERT INTO feature_provider (id_provider, code, time_provider, price_provider) VALUES (%s, %s, %s, %s)"
+     query = "INSERT INTO feature_supplier (id_supplier, code, time_supplier, price_supplier) VALUES (%s, %s, %s, %s)"
      insert = []
 
      for row in csv_doc:
