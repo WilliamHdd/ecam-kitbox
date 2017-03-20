@@ -19,7 +19,14 @@ namespace KitBox
             CLI.RoleMenu();
             while (CLI.run)
             {
-                CLI.MainMenu();
+                if (role == Role.CUSTOMER)
+                {
+                    CLI.CustomerMenu();
+                }
+                else if (role == Role.WORKER)
+                {
+                    CLI.WorkerMenu();
+                }
             }
         }
 
@@ -36,7 +43,7 @@ namespace KitBox
         }
 
 
-        private static void MainMenu()
+        private static void CustomerMenu()
         {
             Console.Clear();
 
@@ -44,8 +51,27 @@ namespace KitBox
 
             main_menu
                 .set_title("What would you like to do?")
+                .add_option("Create new order", CLI.Dummy, false)
+                .add_option("View active orders", CLI.Dummy, false)
                 .add_option("Exit", CLI.Exit, false);
             
+            main_menu.Run();
+        }
+
+        private static void WorkerMenu()
+        {
+            Console.Clear();
+
+            Menu main_menu = new Menu();
+
+            main_menu
+                .set_title("What would you like to do?")
+                .add_option("Create new order", CLI.Dummy, false)
+                .add_option("View order", CLI.Dummy, false)
+                .add_option("List active orders", CLI.Dummy, false)
+                .add_option("Manage supplier orders", CLI.Dummy, false)
+                .add_option("Exit", CLI.Exit, false);
+
             main_menu.Run();
         }
 
@@ -59,7 +85,15 @@ namespace KitBox
             var password = GetConsolePassword();
 
             // TODO: check in database
-            Console.WriteLine(email + " [" + password + "]");
+            switch (role)
+            {
+                case Role.CUSTOMER:
+                    Console.WriteLine("(Customer) " + email + " [" + password + "]");
+                    break;
+                case Role.WORKER:
+                    Console.WriteLine("(Worker) " + email + " [" + password + "]");
+                    break;
+            }
 
 
             return true;
