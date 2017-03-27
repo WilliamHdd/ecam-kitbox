@@ -14,11 +14,11 @@ public class PersonManager
 		this.connection = conn;
 	}
 
-	public Person SelectPerson(string role, string email, string password)
+	public Person SelectPerson(Role role, string email, string password)
 	{
 		Person person = null;
 		string select;
-		if (role == "customer")
+		if (role == Role.CUSTOMER)
 		{
 			select = "SELECT * FROM \"customer\" WHERE email='" + email + "' AND password='" + Person.hash(password) + "';";
 		}
@@ -32,7 +32,7 @@ public class PersonManager
 		NpgsqlDataReader reader = this.command.ExecuteReader();
 		while (reader.Read())
 		{
-			person = new Person(role, (string)reader["name"], (string)reader["address"], (string)reader["phone"], (string)reader["email"], (string)reader["password"]);
+			person = new Person((string)reader["name"], (string)reader["address"], (string)reader["phone"], (string)reader["email"]);
 			person.Id = (int)reader["id"];
 		}
 		reader.Close();
@@ -92,7 +92,7 @@ public class PersonManager
 		List<Person> people = new List<Person>();
 		while (reader.Read())
 		{
-			Person person = new Person(role, (string)reader["name"], (string)reader["address"], (string)reader["phone"], (string)reader["email"], (string)reader["password"]);
+			Person person = new Person((string)reader["name"], (string)reader["address"], (string)reader["phone"], (string)reader["email"]);
 			person.Id = (int)reader["id"];
 			people.Add(person);
 		}

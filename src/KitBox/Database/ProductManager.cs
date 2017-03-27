@@ -41,7 +41,7 @@ public class ProductManager
 
 	public List<StockProduct> SelectAllProduct()
 	{
-		this.connection.Open();
+        this.connection.Open();
 		string select = "SELECT * FROM \"product\"";
 		this.command = new NpgsqlCommand(select, this.connection);
 		NpgsqlDataReader reader = this.command.ExecuteReader();

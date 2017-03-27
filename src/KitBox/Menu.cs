@@ -49,15 +49,18 @@ namespace KitBox
 						Console.Clear();
 						Console.WriteLine("");
 
-						if (options[choice].Item2()) {
-							if (options[choice].Item3) {
-								Console.WriteLine("\nHit [enter] to continue ...");
-								Console.ReadLine();
-							}
-							break;
-						} else {
-							Console.WriteLine("Could not perform the operation... :'(\n");
-						}
+                        // Run action
+                        var success = options[choice].Item2();
+
+                        // If needed, wait
+                        if (options[choice].Item3)
+                        {
+                            Console.WriteLine("\nHit [enter] to continue ...");
+                            Console.ReadLine();
+                        }
+
+                        if (success) { break; }
+
 					} else {
 						Console.WriteLine("Invalid choice...\n");
 					}

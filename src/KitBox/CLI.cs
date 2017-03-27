@@ -3,19 +3,22 @@ using System.Text;
 
 namespace KitBox
 {
-    public enum Role
-    {
-        CUSTOMER,
-        WORKER
-    }
 
     public class CLI
     {
         static private bool run = true;
+        static Company kitbox;
+        static Person user_session;
         static private Role role = Role.CUSTOMER;
 
         public static void Run()
         {
+            var host = Environment.GetEnvironmentVariable("DB_HOST");
+            var db = Environment.GetEnvironmentVariable("DB_NAME");
+            var user = Environment.GetEnvironmentVariable("DB_USER");
+
+            kitbox = new Company(host, db, user);
+
             CLI.RoleMenu();
             while (CLI.run)
             {
@@ -37,7 +40,7 @@ namespace KitBox
             role_menu
                 .set_title("Welcome, choose between customer and worker...")
                 .add_option("Customer", () => { role = Role.CUSTOMER; return Login(); }, true)
-                .add_option("Worker", () => { role = Role.WORKER; return Login(); }, false);
+                .add_option("Worker", () => { role = Role.WORKER; return Login(); }, true);
 
             role_menu.Run();
         }
@@ -84,17 +87,15 @@ namespace KitBox
             Console.Write("password: ");
             var password = GetConsolePassword();
 
-            // TODO: check in database
-            switch (role)
-            {
-                case Role.CUSTOMER:
-                    Console.WriteLine("(Customer) " + email + " [" + password + "]");
-                    break;
-                case Role.WORKER:
-                    Console.WriteLine("(Worker) " + email + " [" + password + "]");
-                    break;
-            }
+            var person_manager = kitbox.PersonManager;
 
+            user_session = person_manager.SelectPerson(role, email, password);
+
+            if (user_session == null)
+            {
+                Console.WriteLine("Username or password is incorrect");
+                return false;
+            }
 
             return true;
         }

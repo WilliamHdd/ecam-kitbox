@@ -1,9 +1,15 @@
 ﻿using System;
 using System.Text;
 
+public enum Role
+{
+    CUSTOMER,
+    WORKER
+}
+
 public class Person
 {
-	private string role;
+	private Role role;
 	protected int id;
 	private string name;
 	private string address;
@@ -12,17 +18,15 @@ public class Person
 	// need to implement the hashed password
 	protected string password;
 
-	public Person(string role, string name, string adress, string phone, string email, string password)
+	public Person(string name, string adress, string phone, string email)
 	{
 		this.Name = name;
 		this.Address = adress;
 		this.Phone = phone;
 		this.Email = email;
-		this.Password = password;
-		this.Role = role;
 	}
 
-	public string Role
+	public Role Role
 	{
 		get { return this.role; }
 
