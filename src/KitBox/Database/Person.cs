@@ -1,32 +1,26 @@
 ﻿using System;
 using System.Text;
 
-public class Person
+public enum Role
 {
-    private string role;
+    CUSTOMER,
+    WORKER
+}
+
+public abstract class Person
+{
     protected int id;
     private string name;
     private string address;
     private string phone;
     private string email;
-    // need to implement the hashed password
-    protected string password;
 
-    public Person(string role, string name, string adress, string phone, string email, string password)
+    public Person(string name, string adress, string phone, string email)
     {
         this.Name = name;
         this.Address = adress;
         this.Phone = phone;
         this.Email = email;
-        this.Password = password;
-        this.Role = role;
-    }
-
-    public string Role
-    {
-        get { return this.role; }
-
-        set { this.role = value; }
     }
 
     public int Id
@@ -34,13 +28,6 @@ public class Person
         get { return this.id; }
 
         set { this.id = value; }
-    }
-
-    public string Password
-    {
-        get { return this.password; }
-
-        set { this.password = hash(value); }
     }
 
     public string Name
