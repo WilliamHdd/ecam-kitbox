@@ -22,7 +22,7 @@ def Postgres(user, db):
 
      cursor.execute("""
      CREATE TABLE IF NOT EXISTS product(
-         reference VARCHAR(255),
+          reference VARCHAR(255),
           code VARCHAR(255) PRIMARY KEY,
           height INT,
           depth INT,
@@ -57,7 +57,7 @@ def Postgres(user, db):
 
      cursor.execute("""
      CREATE TABLE IF NOT EXISTS purchase(
-        id SERIAL PRIMARY KEY NOT NULL,
+          id SERIAL PRIMARY KEY NOT NULL,
           date_order TIMESTAMP,
           id_customer INT,
           status purchase_type,
@@ -70,7 +70,7 @@ def Postgres(user, db):
 
      cursor.execute("""
      CREATE TABLE IF NOT EXISTS feature_supplier(
-        id SERIAL PRIMARY KEY NOT NULL,
+          id SERIAL PRIMARY KEY NOT NULL,
           id_supplier INT,
           code VARCHAR(255),
           time_supplier INT,
@@ -92,7 +92,7 @@ def Postgres(user, db):
      cursor.execute("""
      CREATE TABLE IF NOT EXISTS orderitem(
           id SERIAL PRIMARY KEY NOT NULL,
-        id_order INT,
+          id_order INT,
           nbr_bloc INT,
           code_product VARCHAR(255),
           type orderitem_pos,
@@ -120,11 +120,27 @@ def Postgres(user, db):
 
      cursor.execute("""
      CREATE TABLE IF NOT EXISTS oder_product_supplier(
+          id SERIAL PRIMARY KEY UNIQUE NOT NULL,
+          code_product VARCHAR(255),
+          number_product INT,
+          price FLOAT,
+          FOREIGN KEY (code_product)
+          REFERENCES product(code)
+     )
      """)
      conn.commit()
 
      cursor.execute("""
      CREATE TABLE IF NOT EXISTS oder_supplier(
+          id SERIAL PRIMARY KEY UNIQUE NOT NULL,
+          id_supplier INT,
+          date_order TIMESTAMP,
+          price_total FLOAT,
+          FOREIGN KEY (id_supplier)
+          REFERENCES oder_product_supplier(id),
+          FOREIGN KEY (id_supplier)
+          REFERENCES supplier(id)
+     )
      """)
      conn.commit()
 
