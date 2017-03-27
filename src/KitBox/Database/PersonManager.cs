@@ -6,7 +6,6 @@ using System.Collections.Generic;
 
 public class PersonManager
 {
-
 	private NpgsqlConnection connection;
 	private NpgsqlCommand command;
 

@@ -3,21 +3,21 @@ using UnityNpgsql;
 using UnityNpgsqlTypes;
 using System.Collections.Generic;
 
-public class ProviderManager
+public class SupplierManager
 {
 	private NpgsqlConnection connection;
 	private NpgsqlCommand command;
 
-	public ProviderManager(NpgsqlConnection conn)
+	public SupplierManager(NpgsqlConnection conn)
 	{
 		this.connection = conn;
 	}
 
-	public Provider SelectProvider(string nameSociety)
+	public Supplier SelectSupplier(string nameSociety)
 	{
-		Provider provider = null;
+        Supplier supplier = null;
 		this.connection.Open();
-		string select = "SELECT * FROM \"provider\" WHERE(nameSociety=:name_society)";
+		string select = "SELECT * FROM \"supplier\" WHERE(nameSociety=:name_society)";
 		this.command = new NpgsqlCommand(select, this.connection);
 
 		this.command.Parameters.Add(new NpgsqlParameter("name_society", NpgsqlDbType.Varchar)).Value = nameSociety;
@@ -25,70 +25,70 @@ public class ProviderManager
 		NpgsqlDataReader reader = this.command.ExecuteReader();
 		while (reader.Read())
 		{
-			provider = new Provider((string)reader["name_society"], (string)reader["name_shop"], (string)reader["address"], (string)reader["city"]);
-			provider.Id = (int)reader["id"];
+            supplier = new Supplier((string)reader["name_society"], (string)reader["name_shop"], (string)reader["address"], (string)reader["city"]);
+            supplier.Id = (int)reader["id"];
 		}
 		reader.Close();
 		this.connection.Close();
-		return provider;
+		return supplier;
 	}
 
-	public Provider InsertProvider(Provider provider)
+	public Supplier InsertSupplier(Supplier supplier)
 	{
 		this.connection.Open();
-		string insert = "INSERT INTO \"provider\"(name_society, name_shop, address, city) values(:name_society, :name_shop, :address, :city)";
+		string insert = "INSERT INTO \"supplier\"(name_society, name_shop, address, city) values(:name_society, :name_shop, :address, :city)";
 		this.command = new NpgsqlCommand(insert, this.connection);
 
-		this.command.Parameters.Add(new NpgsqlParameter("name_society", NpgsqlDbType.Varchar)).Value = provider.Society;
-		this.command.Parameters.Add(new NpgsqlParameter("name_shop", NpgsqlDbType.Varchar)).Value = provider.Shop;
-		this.command.Parameters.Add(new NpgsqlParameter("address", NpgsqlDbType.Varchar)).Value = provider.Address;
-		this.command.Parameters.Add(new NpgsqlParameter("city", NpgsqlDbType.Varchar)).Value = provider.City;
+		this.command.Parameters.Add(new NpgsqlParameter("name_society", NpgsqlDbType.Varchar)).Value = supplier.Society;
+		this.command.Parameters.Add(new NpgsqlParameter("name_shop", NpgsqlDbType.Varchar)).Value = supplier.Shop;
+		this.command.Parameters.Add(new NpgsqlParameter("address", NpgsqlDbType.Varchar)).Value = supplier.Address;
+		this.command.Parameters.Add(new NpgsqlParameter("city", NpgsqlDbType.Varchar)).Value = supplier.City;
 
 		this.command.ExecuteNonQuery();
 
 		this.connection.Close();
 
-		provider.Id = SelectProvider(provider.Society).Id;
+        supplier.Id = SelectSupplier(supplier.Society).Id;
 
-		return provider;
+		return supplier;
 	}
 
-	public Provider UpdateProvider(Provider provider)
+	public Supplier UpdateSupplier(Supplier supplier)
 	{
 		this.connection.Open();
 		string update = "UPDATE \"customer\" SET name_society:name_society, name_shop:name_shop, address:address, city:city) WHERE(id =:id);";
 		this.command = new NpgsqlCommand(update, this.connection);
 
-		this.command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Varchar)).Value = provider.Id;
-		this.command.Parameters.Add(new NpgsqlParameter("name_society", NpgsqlDbType.Varchar)).Value = provider.Society;
-		this.command.Parameters.Add(new NpgsqlParameter("name_shop", NpgsqlDbType.Varchar)).Value = provider.Shop;
-		this.command.Parameters.Add(new NpgsqlParameter("address", NpgsqlDbType.Varchar)).Value = provider.Address;
-		this.command.Parameters.Add(new NpgsqlParameter("city", NpgsqlDbType.Varchar)).Value = provider.City;
+		this.command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Varchar)).Value = supplier.Id;
+		this.command.Parameters.Add(new NpgsqlParameter("name_society", NpgsqlDbType.Varchar)).Value = supplier.Society;
+		this.command.Parameters.Add(new NpgsqlParameter("name_shop", NpgsqlDbType.Varchar)).Value = supplier.Shop;
+		this.command.Parameters.Add(new NpgsqlParameter("address", NpgsqlDbType.Varchar)).Value = supplier.Address;
+		this.command.Parameters.Add(new NpgsqlParameter("city", NpgsqlDbType.Varchar)).Value = supplier.City;
 		this.command.ExecuteNonQuery();
 
 		this.connection.Close();
 
-		return SelectProvider(provider.Society);
+		return SelectSupplier(supplier.Society);
 	}
 
-	public List<Provider> SelectAllProvider()
+	public List<Supplier> SelectAllSupplier()
 	{
 		this.connection.Open();
-		string select = "SELECT * FROM \"provider\"";
+		string select = "SELECT * FROM \"supplier\"";
 		this.command = new NpgsqlCommand(select, this.connection);
 		NpgsqlDataReader reader = this.command.ExecuteReader();
-		List<Provider> providers = new List<Provider>();
+		List<Supplier> suppliers = new List<Supplier>();
 		while (reader.Read())
 		{
-			Provider provider = new Provider((string)reader["name_society"], (string)reader["name_shop"], (string)reader["address"], (string)reader["city"]);
-			provider.Id = (int)reader["id"];
-			providers.Add(provider);
+            Supplier supplier = new Supplier((string)reader["name_society"], (string)reader["name_shop"], (string)reader["address"], (string)reader["city"]);
+            supplier.Id = (int)reader["id"];
+            suppliers.Add(supplier);
 		}
 
 		reader.Close();
 		this.connection.Close();
 
-		return providers;
+		return suppliers;
 	}
 
 
