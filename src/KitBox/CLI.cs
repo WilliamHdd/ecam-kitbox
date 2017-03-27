@@ -57,7 +57,7 @@ namespace KitBox
                 .add_option("Create new order", CLI.Dummy, false)
                 .add_option("View active orders", CLI.Dummy, false)
                 .add_option("Exit", CLI.Exit, false);
-            
+
             main_menu.Run();
         }
 
