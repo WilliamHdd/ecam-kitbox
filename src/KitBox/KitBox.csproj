@@ -69,6 +69,8 @@
     <Compile Include="Database\InvoiceItem.cs" />
     <Compile Include="Database\Person.cs" />
     <Compile Include="Database\PersonManager.cs" />
+    <Compile Include="Database\Customer.cs" />
+    <Compile Include="Database\Worker.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Drawing" />

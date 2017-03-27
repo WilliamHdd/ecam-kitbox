@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using UnityNpgsql;
 using UnityNpgsqlTypes;
 using System.Collections.Generic;
@@ -32,7 +33,15 @@ public class PersonManager
 		NpgsqlDataReader reader = this.command.ExecuteReader();
 		while (reader.Read())
 		{
-			person = new Person((string)reader["name"], (string)reader["address"], (string)reader["phone"], (string)reader["email"]);
+            if (role == Role.CUSTOMER)
+            {
+                person = new Customer((string)reader["name"], (string)reader["address"], (string)reader["phone"], (string)reader["email"]);
+            }
+            else
+            {
+                person = new Worker((string)reader["name"], (string)reader["address"], (string)reader["phone"], (string)reader["email"]);
+            }
+			
 			person.Id = (int)reader["id"];
 		}
 		reader.Close();
@@ -42,31 +51,33 @@ public class PersonManager
 
 	}
 
-	public Person InsertPerson(Person person)
+    public Person InsertPerson(Person person, Role role, string password)
 	{
 		this.connection.Open();
-		string insert = "INSERT INTO \"" + person.Role + "\"(name,address,phone,email, password) values(:name,:address,:phone,:email, :password)";
+        string r = role == Role.CUSTOMER ? "customer" : "worker";
+		string insert = "INSERT INTO \"" + r + "\"(name,address,phone,email, password) values(:name,:address,:phone,:email, :password)";
 		this.command = new NpgsqlCommand(insert, this.connection);
 
 		this.command.Parameters.Add(new NpgsqlParameter("name", NpgsqlDbType.Varchar)).Value = person.Name;
 		this.command.Parameters.Add(new NpgsqlParameter("address", NpgsqlDbType.Varchar)).Value = person.Address;
 		this.command.Parameters.Add(new NpgsqlParameter("phone", NpgsqlDbType.Varchar)).Value = person.Phone;
 		this.command.Parameters.Add(new NpgsqlParameter("email", NpgsqlDbType.Varchar)).Value = person.Email;
-		this.command.Parameters.Add(new NpgsqlParameter("password", NpgsqlDbType.Varchar)).Value = person.Password;
+        this.command.Parameters.Add(new NpgsqlParameter("password", NpgsqlDbType.Varchar)).Value = Person.hash(password);
 
 		this.command.ExecuteNonQuery();
 
 		this.connection.Close();
 
-		person.Id = SelectPerson(person.Role, person.Email, person.Password).Id;
+        person.Id = SelectPerson(role, person.Email, password).Id;
 
 		return person;
 	}
 
-	public Person UpdatePerson(Person person)
+	public void UpdatePerson(Person person, Role role)
 	{
 		this.connection.Open();
-		string update = "UPDATE \"" + person.Role + "\" SET name:name, address:address, phone:phone, email:email, password:password) WHERE(id =:id);";
+        string r = role == Role.CUSTOMER ? "customer" : "worker";
+		string update = "UPDATE \"" + r + "\" SET name:name, address:address, phone:phone, email:email) WHERE(id =:id);";
 		this.command = new NpgsqlCommand(update, this.connection);
 
 		this.command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Varchar)).Value = person.Id;
@@ -74,16 +85,15 @@ public class PersonManager
 		this.command.Parameters.Add(new NpgsqlParameter("address", NpgsqlDbType.Varchar)).Value = person.Address;
 		this.command.Parameters.Add(new NpgsqlParameter("phone", NpgsqlDbType.Varchar)).Value = person.Phone;
 		this.command.Parameters.Add(new NpgsqlParameter("email", NpgsqlDbType.Varchar)).Value = person.Email;
-		this.command.Parameters.Add(new NpgsqlParameter("password", NpgsqlDbType.Varchar)).Value = person.Password;
 
 		this.command.ExecuteNonQuery();
 
 		this.connection.Close();
 
-		return SelectPerson(person.Role, person.Email, person.Password);
+		return;
 	}
 
-	public List<Person> SelectAllPerson(string role)
+	public List<Person> SelectAllPerson(Role role)
 	{
 		this.connection.Open();
 		string select = SelectRole(role);
@@ -92,9 +102,13 @@ public class PersonManager
 		List<Person> people = new List<Person>();
 		while (reader.Read())
 		{
-			Person person = new Person((string)reader["name"], (string)reader["address"], (string)reader["phone"], (string)reader["email"]);
-			person.Id = (int)reader["id"];
-			people.Add(person);
+            
+            if (role == Role.CUSTOMER)
+                people.Add( new Customer((string)reader["name"], (string)reader["address"], (string)reader["phone"], (string)reader["email"]) );
+            else
+                people.Add( new Worker((string)reader["name"], (string)reader["address"], (string)reader["phone"], (string)reader["email"]));
+
+            people.Last().Id = (int)reader["id"];
 		}
 
 		reader.Close();
@@ -103,20 +117,20 @@ public class PersonManager
 		return people;
 	}
 
-	private string SelectRole(string role)
+	private string SelectRole(Role role)
 	{
 		string select;
 
 		switch (role)
 		{
-			case "worker":
+			case Role.WORKER:
 				select = "SELECT * FROM \"worker\" WHERE(email=:email)";
 				break;
-			case "customer":
+			case Role.CUSTOMER:
 				select = "SELECT * FROM \"customer\" WHERE(email=:email)";
 				break;
-			default:
-				throw new Exception("Invalid Role");
+            default:
+                throw new Exception("Invalid Role");
 		}
 
 		return select;

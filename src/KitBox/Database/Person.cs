@@ -7,16 +7,13 @@ public enum Role
     WORKER
 }
 
-public class Person
+public abstract class Person
 {
-    private Role role;
     protected int id;
     private string name;
     private string address;
     private string phone;
     private string email;
-    // need to implement the hashed password
-    protected string password;
 
     public Person(string name, string adress, string phone, string email)
     {
@@ -26,25 +23,11 @@ public class Person
         this.Email = email;
     }
 
-    public Role Role
-    {
-        get { return this.role; }
-
-        set { this.role = value; }
-    }
-
     public int Id
     {
         get { return this.id; }
 
         set { this.id = value; }
-    }
-
-    public string Password
-    {
-        get { return this.password; }
-
-        set { this.password = hash(value); }
     }
 
     public string Name

@@ -19,6 +19,13 @@ namespace KitBox
 
             kitbox = new Company(host, db, user);
 
+            // Verify if there is an 'admin' in the database, if not, create one
+            if (kitbox.PersonManager.SelectPerson(Role.WORKER, "admin", "admin") == null)
+            {
+                var admin = new Worker("admin", "admin", "admin", "admin@admin.com");
+                kitbox.PersonManager.InsertPerson(admin, Role.WORKER, "admin");
+            }
+
             CLI.RoleMenu();
             while (CLI.run)
             {
