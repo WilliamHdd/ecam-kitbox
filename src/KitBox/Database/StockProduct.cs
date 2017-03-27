@@ -81,9 +81,9 @@ public class StockProduct
 		this.connection = conn;
 	}
 
-	public  Supplier BestSupplier()
+	/*public  Supplier BestSupplier()
 	{
-
+		
 		this.connection.Open();
 		string select = "SELECT * FROM \"feature_Supplier\" WHERE code = '" + product + "';";
 		NpgsqlDataAdapter objDataAdapter = new NpgsqlDataAdapter(select, this.connection);
@@ -96,7 +96,7 @@ public class StockProduct
 
 
 
-		/*foreach (DataTable table in features.Tables)
+		foreach (DataTable table in features.Tables)
 		{
 			foreach (DataRow row in table.Rows)
 			{
@@ -112,10 +112,9 @@ public class StockProduct
 				}
 			}
 		}
-*/
+
 		return %;
 
-	}
+	}*/
 }
 
-}

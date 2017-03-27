@@ -64,8 +64,8 @@
     <Compile Include="Main.cs" />
     <Compile Include="Database\Invoice.cs" />
     <Compile Include="Database\InvoiceManager.cs" />
-    <Compile Include="Database\Provider.cs" />
-    <Compile Include="Database\ProviderManager.cs" />
+    <Compile Include="Database\Supplier.cs" />
+    <Compile Include="Database\SupplierManager.cs" />
     <Compile Include="Database\InvoiceItem.cs" />
     <Compile Include="Database\Person.cs" />
     <Compile Include="Database\PersonManager.cs" />
