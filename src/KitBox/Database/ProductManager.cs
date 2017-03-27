@@ -4,10 +4,13 @@ using UnityNpgsql;
 using UnityNpgsqlTypes;
 using System.Collections.Generic;
 
+
 public class ProductManager
 {
-    private NpgsqlConnection connection;
-    private NpgsqlCommand command;
+	private NpgsqlConnection connection;
+	private NpgsqlCommand command;
+    
+    
 
     public ProductManager(NpgsqlConnection conn)
     {
@@ -17,8 +20,8 @@ public class ProductManager
     public StockProduct GenerateProduct(NpgsqlDataReader reader)
     {
         Dimensions specs = new Dimensions((int)reader["width"], (int)reader["height"], (int)reader["depth"]);
-        return new StockProduct((string)reader["reference"], (string)reader["code"], specs, (string)reader["color"], (int)reader["stock"], (int)reader["stock_min"], (double)reader["price"], (int)reader["piece_per_bloc"]);
-    }
+		return new StockProduct((string)reader["reference"], (string)reader["code"], specs, color, (int)reader["stock"], (int)reader["stock_min"], (double)reader["price"], (int)reader["piece_per_bloc"], (int)reader["Supplier"], (int)reader["delivery_time"]);
+	}
 
     public StockProduct SelectProduct(string code)
     {
@@ -56,5 +59,11 @@ public class ProductManager
 
         return products;
     }
-}
+	public string GetBestSupplier()
+	{
+
+		return StockProduct.BestSupplier();
+
+	}
+
 

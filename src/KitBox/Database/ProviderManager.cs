@@ -1,7 +1,9 @@
 ﻿using System;
-using UnityNpgsql;
-using UnityNpgsqlTypes;
+using System.Data;
+using Npgsql;
+using NpgsqlTypes;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 
 public class SupplierManager
 {
@@ -10,6 +12,7 @@ public class SupplierManager
 
 	public SupplierManager(NpgsqlConnection conn)
 	{
+
 		this.connection = conn;
 	}
 
@@ -27,17 +30,20 @@ public class SupplierManager
 		{
             supplier = new Supplier((string)reader["name_society"], (string)reader["name_shop"], (string)reader["address"], (string)reader["city"]);
             supplier.Id = (int)reader["id"];
+
 		}
 		reader.Close();
 		this.connection.Close();
 		return supplier;
 	}
 
+
 	public Supplier InsertSupplier(Supplier supplier)
 	{
 		this.connection.Open();
 		string insert = "INSERT INTO \"supplier\"(name_society, name_shop, address, city) values(:name_society, :name_shop, :address, :city)";
 		this.command = new NpgsqlCommand(insert, this.connection);
+
 
 		this.command.Parameters.Add(new NpgsqlParameter("name_society", NpgsqlDbType.Varchar)).Value = supplier.Society;
 		this.command.Parameters.Add(new NpgsqlParameter("name_shop", NpgsqlDbType.Varchar)).Value = supplier.Shop;
@@ -58,7 +64,6 @@ public class SupplierManager
 		this.connection.Open();
 		string update = "UPDATE \"customer\" SET name_society:name_society, name_shop:name_shop, address:address, city:city) WHERE(id =:id);";
 		this.command = new NpgsqlCommand(update, this.connection);
-
 		this.command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Varchar)).Value = supplier.Id;
 		this.command.Parameters.Add(new NpgsqlParameter("name_society", NpgsqlDbType.Varchar)).Value = supplier.Society;
 		this.command.Parameters.Add(new NpgsqlParameter("name_shop", NpgsqlDbType.Varchar)).Value = supplier.Shop;
@@ -71,6 +76,7 @@ public class SupplierManager
 		return SelectSupplier(supplier.Society);
 	}
 
+
 	public List<Supplier> SelectAllSupplier()
 	{
 		this.connection.Open();
@@ -80,15 +86,42 @@ public class SupplierManager
 		List<Supplier> suppliers = new List<Supplier>();
 		while (reader.Read())
 		{
-            Supplier supplier = new Supplier((string)reader["name_society"], (string)reader["name_shop"], (string)reader["address"], (string)reader["city"]);
-            supplier.Id = (int)reader["id"];
-            suppliers.Add(supplier);
+			Supplier supplier = new Supplier((string)reader["name_society"], (string)reader["name_shop"], (string)reader["address"], (string)reader["city"]);
+			supplier.Id = (int)reader["id"];
+			suppliers.Add(supplier);
+			reader.Close();
+			this.connection.Close();
 		}
+			return suppliers;
 
-		reader.Close();
-		this.connection.Close();
+	}
 
-		return suppliers;
+		public DataSet BestSupplier(string product)
+	{
+		/*	this.connection.Open();
+			string select = "SELECT * FROM \"feature_Supplier\" WHERE code = '" + product + "';";
+			NpgsqlDataAdapter objDataAdapter = new NpgsqlDataAdapter(select, this.connection);
+			DataSet features = new DataSet();
+			objDataAdapter.Fill(features, "Features");
+			this.connection.Close();
+            foreach (DataTable table in features.Tables)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+					foreach (DataColumn column in table.Columns)
+					{
+						object item = row[column];
+						//if (column.Namespace == ref
+						Console.WriteLine(item.ToString());
+						// read column and item
+					}
+                }
+            }
+
+			return features;
+
+		}*/
+
 	}
 
 
